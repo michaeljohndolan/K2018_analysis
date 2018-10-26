@@ -20,7 +20,7 @@ P5_1.Seu<-CreateSeuratObject(raw.data = P5_1 , min.cells = 3, min.genes = 200,
                              project = "P5_1")
 
 #Perform the cell QC, calculate the percent mito 
-mito.genes <- grep(pattern = "^MT-", x = rownames(x = P5_1.Seu@raw.data), value = TRUE)
+mito.genes <- grep(pattern = "^mt.", x = rownames(x = P5_1.Seu@raw.data), value = TRUE)
 percent.mito <- Matrix::colSums(pbmc@raw.data[mito.genes, ])/Matrix::colSums(pbmc@raw.data)
 
 
