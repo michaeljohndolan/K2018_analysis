@@ -47,7 +47,7 @@ for(i in 1:4){
       object<-read.table(file =P.X.tsv[k] , header = TRUE, row.names = 1, sep = '\t')
       object<-t(object)
       object<-CreateSeuratObject(raw.data = object , min.cells = 3, min.genes = 200, 
-                         project =P.X.tsv[k] )
+                         project =P.X.tsv[k])
     } #Will initialize a Seurat object 
     if(k>1) {
       temp<-read.table(file =P.X.tsv[k] , header = TRUE, row.names = 1, sep = '\t')
@@ -55,46 +55,18 @@ for(i in 1:4){
       temp<-CreateSeuratObject(raw.data = temp , min.cells = 3, min.genes = 200, 
                                  project =P.X.tsv[k])
       object<-MergeSeurat(object1 = object, object2 = temp, project = P.X, do.normalize = FALSE
-                          ,add.cell.id2 = P.X.tsv[k])
+                          , add.cell.id1 = k ,add.cell.id2 = P.X.tsv[k])
       rm(temp)
     } #Will merge subsequent Seurat samples
   }
-  saveRDS(object = object, file = paste0(P.X, "_aggregated.rds"))
+  saveRDS(object = object, file = paste0(P.X, "aggregated.rds"))
   rm(object)
 }
 
+#Create aggregated dataset 
 
-
-
-
-
-#Loop through the samples and run the Kalish QC and save the Seurat object as file. 
-for(i in 1:length(samples)) {
-
-  #Load the data and initialize the object 
-  object_name<-name.extract(samples[i])
-  object<-read.table(samples[i], header=TRUE, row.names=1, sep = '\t')
-  object<-t(object)
-  object<-CreateSeuratObject(raw.data = object , min.cells = 3, min.genes = 200, 
-                             project =  object_name)
-  
-  #Calculate the percent mito for QC 
-  mito.genes <- grep(pattern = "^mt.", x = rownames(x = object@raw.data), value = TRUE)
-  percent.mito <- Matrix::colSums(object@raw.data[mito.genes, ])/Matrix::colSums(object@raw.data)
-  object<-AddMetaData(object = object, metadata = percent.mito, col.name = "percent.mito")
-  
-  #Filter the cells as per Kalish. No nGene filtering! 
-  object<- FilterCells(object =object, subset.names = c("nUMI"), 
-                         low.thresholds = c(500), high.thresholds = 15000)
-  
-  #Save the object
-  saveRDS(object, file = paste0(object_name, "_Kalishfiltered.rds"))
-  print(object_name)
-}
-
-
-#Actually just want to do the below on the final dataset 
-#Normalize the filtered dataset 
+#Begin preprocessing on aggregated dataset.
+#Normalize the data as per Kalish protocol. 
 P5<- NormalizeData(object = P5, normalization.method = "LogNormalize", 
                          scale.factor = 10000)
   

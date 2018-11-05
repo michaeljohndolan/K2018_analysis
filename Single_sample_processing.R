@@ -87,6 +87,10 @@ TSNEPlot(object = P5_1.Seu, do.label = TRUE, pt.size = 0.25)
 All.markers<-FindAllMarkers(object = P5_1.Seu, only.pos = TRUE, min.pct = 0.25, thresh.use = 0.25)
 
 #Identify the microglia
-FeaturePlot(object = P5_1.Seu, features.plot = c("Cx3cr1", "Crybb2"), cols.use = c("grey", "blue"), 
+FeaturePlot(object = P5_1.Seu, features.plot = c("Cx3cr1", "C1qa"), cols.use = c("grey", "blue"), 
             reduction.use = "tsne", pt.size=0.8)
 
+#Extract microglia cluster only 
+filter(P5_1.Seu@meta.data, res.0.8==10)
+P5_1_mgl <- SubsetData(object = P5_1.Seu,ident.use = 10 )
+saveRDS(P5_1_mgl, "P5_1_mgl.rds")
