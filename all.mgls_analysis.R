@@ -52,8 +52,7 @@ P5_subtype_markers<-mutate(P5_subtype_markers, diff=pct.1-pct.2)
 P5_subtype_markers<-filter(P5_subtype_markers, p_val_adj<0.05)
 P5_subtype_markers<-arrange(P5_subtype_markers, desc(diff), avg_logFC)
 View(P5_subtype_markers)
-View(filter(P5_subtype_markers, pct.2<0.2 ,p_val_adj<0.05))
-
+View(filter(P5_subtype_markers, cluster==1))
 
 #Known microglial genes with roles in pruning/lysosomes and phagocytosis
 DotPlot(object = P5, genes.plot =  c("C1qa", "C1qb", "C1qc", "Grn", "Sirpa", "Itgam", "Laptm5", "Hmgb2") , plot.legend = TRUE)
@@ -64,9 +63,7 @@ DotPlot(object = P5, genes.plot =  c("Tyrobp", "Apoe", "Trem2") , plot.legend = 
 #Previously unknown interesting genes: CCL3 (chemokine, implicated in retinal damage), Vsir (inhibitory immune checkpoint)
 #Fcer1g (viral), pathogen recognition (Fcgr3), Trem2, Apoe, fragile X interactor Cyfip1, 
 DotPlot(object=P5, genes.plot=c("Ccl3", "Vsir", "Cyfip1", "Mpeg1", "Hpgds"), plot.legend = TRUE)
-
 DotPlot(object=P5, genes.plot=c("Cxcl2", "Hspa1b", "Hspa1a", "Tnfaip3", "Cd86"), plot.legend = TRUE)
-
 
 #What genes are highly correlated with C1qa in this P5 dataset 
 matrix<-P5@data
@@ -78,3 +75,5 @@ View(correlations)
 
 #Next step, compare these pruning microglia to all microglia in the Kalish dataset 
 #Do some gene ontology 
+#read chemokine and receptor papers
+#look at the neurons and astros also that correlate with known genes 
