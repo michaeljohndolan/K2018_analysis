@@ -77,4 +77,6 @@ correlations<-na.omit(correlations)
 View(correlations)
 
 #Next step, compare these pruning microglia to all microglia in the Kalish dataset 
-#Do some gene ontology 
+#Do some gene ontology, look at P5 neurons and find a "pruned neuron" signature, look at Tim's dataset. 
+#Examine the other microglia at P5, what are they doing. Read Tim's paper 
+
