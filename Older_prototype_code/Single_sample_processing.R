@@ -26,7 +26,7 @@ setwd(path)
 
 #Read in a single tsv file for analysis, careful b/c first col is row names. File is 1.5GB! Transpose to get 
 #genes x columns for Seurat 
-P5_1<-read.table(file = "GSM2971228_P5_1.counts.tsv", header = T, row.names = 1, sep = '\t')
+P5_1<-read.table(file = "GSM2971232_P10_1.counts.tsv", header = T, row.names = 1, sep = '\t')
 P5_1<-t(P5_1)
 
 #Initialize the Seurat Object, contains 14373 cells
@@ -52,8 +52,8 @@ median(P5_1.Seu@meta.data$nGene)
 #nUMIs and nGenes. May need to write some code to do this in an automatic manner or maybe not.
 #There are initially 14373 cells, giving us 2.3GB object. 
 nrow(P5_1.Seu@meta.data)
-P5_1.Seu<- FilterCells(object = P5_1.Seu, subset.names = c("nUMI", "nGene", "percent.mito"), 
-                    low.thresholds = c(400, 200, -Inf), high.thresholds = c(2500, 700, 0.2))
+P5_1.Seu<- FilterCells(object = P5_1.Seu, subset.names = "nUMI", 
+                    low.thresholds = 500, high.thresholds = 15000)
 nrow(P5_1.Seu@meta.data)
 
 #Normalize the filtered dataset 
@@ -76,11 +76,11 @@ VizPCA(object = P5_1.Seu, pcs.use = 1:2)
 PCElbowPlot(object = P5_1.Seu)
 
 #Cluster the data 
-P5_1.Seu<- FindClusters(object = P5_1.Seu, reduction.type = "pca", dims.use = 1:11, 
+P5_1.Seu<- FindClusters(object = P5_1.Seu, reduction.type = "pca", dims.use = 1:19, 
                      resolution = 0.8, print.output = 0, save.SNN = TRUE)
 
 #Use the clustering to inform a tSNE on the significant PCs
-P5_1.Seu<- RunTSNE(object = P5_1.Seu, dims.use = 1:11, do.fast = TRUE)
+P5_1.Seu<- RunTSNE(object = P5_1.Seu, dims.use = 1:19, do.fast = TRUE)
 TSNEPlot(object = P5_1.Seu, do.label = TRUE, pt.size = 0.25)
 
 #Find differentially expressed genes 
@@ -92,5 +92,5 @@ FeaturePlot(object = P5_1.Seu, features.plot = c("Cx3cr1", "C1qa"), cols.use = c
 
 #Extract microglia cluster only 
 filter(P5_1.Seu@meta.data, res.0.8==10)
-P5_1_mgl <- SubsetData(object = P5_1.Seu,ident.use = 10 )
-saveRDS(P5_1_mgl, "P5_1_mgl.rds")
+P10_1_mgl <- SubsetData(object = P5_1.Seu,ident.use = 9 )
+saveRDS(P10_1_mgl, "P10_1_mgl.rds")
