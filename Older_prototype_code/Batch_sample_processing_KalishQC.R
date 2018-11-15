@@ -47,7 +47,7 @@ for(i in 1:4){
       object<-read.table(file =P.X.tsv[k] , header = TRUE, row.names = 1, sep = '\t')
       object<-t(object)
       object<-CreateSeuratObject(raw.data = object , min.cells = 3, min.genes = 200, 
-                         project =P.X.tsv[k])
+                         project =P.X.tsv[k] )
     } #Will initialize a Seurat object 
     if(k>1) {
       temp<-read.table(file =P.X.tsv[k] , header = TRUE, row.names = 1, sep = '\t')
