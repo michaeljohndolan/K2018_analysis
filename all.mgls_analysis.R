@@ -61,11 +61,11 @@ DotPlot(object = P5, genes.plot =  c("C1qa", "C1qb", "C1qc", "Grn", "Sirpa", "It
 DotPlot(object = P5, genes.plot =  c("Tyrobp", "Apoe", "Trem2") , plot.legend = TRUE)
 
 #Previously unknown interesting genes: CCL3 (chemokine, implicated in retinal damage), Vsir (inhibitory immune checkpoint)
-#Fcer1g (viral), pathogen recognition (Fcgr3), Trem2, Apoe, fragile X interactor Cyfip1, 
+#Fcer1g (viral), pathogen recognition (Fcgr3), Trem2, Apoe, fragile X interactor Cyfip1, Tnf? 
 DotPlot(object=P5, genes.plot=c("Ccl3", "Vsir", "Cyfip1", "Mpeg1", "Hpgds"), plot.legend = TRUE)
 DotPlot(object=P5, genes.plot=c("Cxcl2", "Hspa1b", "Hspa1a", "Tnfaip3", "Cd86"), plot.legend = TRUE)
 
-#What genes are highly correlated with C1qa in this P5 dataset 
+#What genes are highly correlated with C1qa in this P5 dataset, gives similar results
 matrix<-P5@data
 matrix_mod<-as.matrix(matrix)
 gene<-as.numeric(matrix_mod["C1qa",])
@@ -73,7 +73,21 @@ correlations<-apply(matrix_mod,1,function(x){cor(gene,x)})
 correlations<-na.omit(correlations)
 View(correlations)
 
+#Compare P5 cluster 1 to all the other microglia. 
+P5.1<-SubsetData(object = P5, ident.use = 1) #Extract all P5 cluster 1s
+all.mgls@meta.data$pruning<-"not_high"
+all.mgls@meta.data[P5.1.barcodes,]$pruning<-"HighPruneP5"
+all.mgls<-SetAllIdent(all.mgls, id  = "or")
+
+TSNEPlot(all.mgls)
+FeaturePlot(all.mgls, features.plot = "percent.mito", no.legend = F)
+
 #Next step, compare these pruning microglia to all microglia in the Kalish dataset 
 #Do some gene ontology, look at P5 neurons and find a "pruned neuron" signature, look at Tim's dataset. 
 #Examine the other microglia at P5, what are they doing. Read Tim's paper 
+
+
+
+
+
 
