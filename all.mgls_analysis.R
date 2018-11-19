@@ -46,6 +46,8 @@ P5 <- FindClusters(object = P5, reduction.type = "pca", dims.use = 1:15,
 P5 <- RunTSNE(object = P5, dims.use = 1:15, do.fast = TRUE)
 TSNEPlot(object = P5, pt.size = 1, do.label = TRUE)
 
+FeaturePlot(P5, features.plot = "nUMI", no.legend = F)
+
 #Identify the subsets within P5, see C1qa, C1qb and C1qc are all enriched in cluster 1 (216)
 P5_subtype_markers<-FindAllMarkers(object = P5)
 P5_subtype_markers<-mutate(P5_subtype_markers, diff=pct.1-pct.2)
@@ -78,17 +80,24 @@ P5.1<-SubsetData(object = P5, ident.use = 1) #Extract all P5 cluster 1s
 P5.1.barcodes<-rownames(P5.1@meta.data)
 all.mgls@meta.data$pruning<-"not_high"
 all.mgls@meta.data[P5.1.barcodes,]$pruning<-"HighPruneP5"
-all.mgls<-SetAllIdent(all.mgls, id  = "or")
+all.mgls<-SetAllIdent(all.mgls, id  = "pruning")
 
-TSNEPlot(all.mgls)
+TSNEPlot(all.mgls, pt.size = 0.5)
 FeaturePlot(all.mgls, features.plot = "percent.mito", no.legend = F)
+
+#Seems to be potential doublets in the dataset which may explain the pruning microglia. 
+#Lets examine the QC metrics on just the microglia alone at different timepoints 
+all.mgls<-SetAllIdent(all.mgls, id  = "orig.ident")
+VlnPlot(all.mgls, features.plot = "nGene")
+
+GenePlot(object = all.mgls, "nGene", "nUMI", cex.use = 0.6, do.identify = T)
+
+
+
+
+
+
 
 #Next step, compare these pruning microglia to all microglia in the Kalish dataset 
 #Do some gene ontology, look at P5 neurons and find a "pruned neuron" signature, look at Tim's dataset. 
 #Examine the other microglia at P5, what are they doing. Read Tim's paper 
-
-
-
-
-
-
