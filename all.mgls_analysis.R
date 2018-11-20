@@ -2,6 +2,11 @@
 library(Seurat)
 library(Matrix)
 library(dplyr)
+library(NNLM)
+#This has a lot of nice auxiliary functions I've cooked up over the years.
+source("SeuratExtrafunctions.R")
+library(data.table)
+library(moments)  #Might need to download--just a small package for calculating moments of distributions
 
 #Read in the all.mgl dataset
 setwd("~/Google Drive (mdolan@broadinstitute.org)/Misc_Projects/Thalamus_scRNAseq")
@@ -83,16 +88,20 @@ all.mgls@meta.data[P5.1.barcodes,]$pruning<-"HighPruneP5"
 all.mgls<-SetAllIdent(all.mgls, id  = "pruning")
 
 TSNEPlot(all.mgls, pt.size = 0.5)
-FeaturePlot(all.mgls, features.plot = "percent.mito", no.legend = F)
+FeaturePlot(all.mgls, features.plot = "nGene", no.legend = F)
 
 #Seems to be potential doublets in the dataset which may explain the pruning microglia. 
 #Lets examine the QC metrics on just the microglia alone at different timepoints 
 all.mgls<-SetAllIdent(all.mgls, id  = "orig.ident")
 VlnPlot(all.mgls, features.plot = "nGene")
 
-GenePlot(object = all.mgls, "nGene", "nUMI", cex.use = 0.6, do.identify = T)
+#Reexamine the microglia with NMF
+#Can change the number of factors and see what it does.
+all.mgls<-RunNMF(all.mgls,factors.compute = 12,log.norm = T)
 
-
+#Can now keep the same tsne, and you know the locatino of your putative pruning cluster.  Now run the curation script and see which factor loads onto those cells.
+all.mgls<- CurateNMF.seurat(all.mgls, make.tsne = F, feature.plot = T,reduction.embedding = 'tsne',reduction.use = 'nmf',do.reorder = T)
+TSNEPlot(all.mgls)
 
 
 
