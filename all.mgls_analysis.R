@@ -97,12 +97,13 @@ VlnPlot(all.mgls, features.plot = "nGene")
 
 #Reexamine the microglia with NMF
 #Can change the number of factors and see what it does.
-all.mgls<-RunNMF(all.mgls,factors.compute = 12,log.norm = T)
+all.mgls<-RunNMF(all.mgls,factors.compute = 18,log.norm = T)
 
-#Can now keep the same tsne, and you know the locatino of your putative pruning cluster.  Now run the curation script and see which factor loads onto those cells.
+#Can now keep the same tsne, and you know the location of your putative pruning cluster.  Now run the curation script and see which factor loads onto those cells.
+pdf("~/Desktop/nmf.pdf")
 all.mgls<- CurateNMF.seurat(all.mgls, make.tsne = F, feature.plot = T,reduction.embedding = 'tsne',reduction.use = 'nmf',do.reorder = T)
 TSNEPlot(all.mgls)
-
+dev.off()
 
 
 
