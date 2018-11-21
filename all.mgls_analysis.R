@@ -80,12 +80,18 @@ correlations<-apply(matrix_mod,1,function(x){cor(gene,x)})
 correlations<-na.omit(correlations)
 View(correlations)
 
-#Compare P5 cluster 1 to all the other microglia. 
+#Compare P5 cluster 1 to all the other microglia and find markers  
 P5.1<-SubsetData(object = P5, ident.use = 1) #Extract all P5 cluster 1s
 P5.1.barcodes<-rownames(P5.1@meta.data)
 all.mgls@meta.data$pruning<-"not_high"
 all.mgls@meta.data[P5.1.barcodes,]$pruning<-"HighPruneP5"
 all.mgls<-SetAllIdent(all.mgls, id  = "pruning")
+
+highprune<-FindAllMarkers(all.mgls)
+highprune<-mutate(highprune, diff=pct.1-pct.2)
+highprune<-filter(highprune, p_val_adj<0.05)
+highprune<-arrange(highprune, desc(diff), avg_logFC)
+View(highprune)
 
 TSNEPlot(all.mgls, pt.size = 0.5)
 FeaturePlot(all.mgls, features.plot = "nGene", no.legend = F)
@@ -105,7 +111,7 @@ all.mgls<- CurateNMF.seurat(all.mgls, make.tsne = F, feature.plot = T,reduction.
 TSNEPlot(all.mgls)
 dev.off()
 
-
+#Skew is how mcuch
 
 
 #Next step, compare these pruning microglia to all microglia in the Kalish dataset 
